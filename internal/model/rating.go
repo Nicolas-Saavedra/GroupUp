@@ -4,7 +4,7 @@ type Rating struct {
 	Base
 	TextContent string
 	StarRating  uint8
-	UserID      uint
+	UserID      string
 	Tags        []RatingTag
 }
 

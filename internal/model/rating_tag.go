@@ -3,7 +3,7 @@ package model
 type RatingTag struct {
 	Base
 	Value    string
-	RatingID uint
+	RatingID string
 }
 
 func (m *RatingTag) TableName() string {

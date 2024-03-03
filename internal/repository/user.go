@@ -3,6 +3,8 @@ package repository
 import (
 	"context"
 
+	"gorm.io/gorm/clause"
+
 	"GroupUp/internal/model"
 )
 
@@ -25,7 +27,10 @@ func NewUserRepository(repository *Repository) UserRepository {
 
 func (r *userRepository) FirstById(id string, ctx context.Context) (*model.User, error) {
 	var user model.User
-	err := r.DB(ctx).First(&user, "id = ?", id).Error
+	err := r.DB(ctx).
+		Preload(clause.Associations).
+		First(&user, "id = ?", id).
+		Error
 	return &user, err
 }
 

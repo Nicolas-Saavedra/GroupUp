@@ -3,7 +3,7 @@ package model
 type UserTag struct {
 	Base
 	Value  string
-	UserID uint `json:"-"`
+	UserID string `json:"-"`
 }
 
 func (m *UserTag) TableName() string {
