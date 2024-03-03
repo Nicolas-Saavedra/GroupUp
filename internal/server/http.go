@@ -24,7 +24,7 @@ func NewServerHTTP(
 				"say": "backend running successfully",
 			})
 		})
-		v1.GET("/user", userHandler.GetUserById)
+		v1.GET("/users/:id", userHandler.GetUserById)
 	}
 	return r
 }

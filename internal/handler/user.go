@@ -2,6 +2,7 @@ package handler
 
 import (
 	"errors"
+	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -30,15 +31,13 @@ func NewUserHandler(handler *Handler, userService service.UserService) UserHandl
 }
 
 func (h *userHandler) GetUserById(ctx *gin.Context) {
-	var params struct {
-		Id *string `form:"id" binding:"required"`
-	}
-	if err := ctx.ShouldBind(&params); err != nil {
-		resp.HandleError(ctx, http.StatusBadRequest, 1, err.Error(), nil)
+	id := ctx.Param("id")
+	if id == "" {
+		resp.HandleError(ctx, http.StatusBadRequest, 1, "no supplied id", nil)
 		return
 	}
 
-	user, err := h.userService.GetUserById(*params.Id, ctx)
+	user, err := h.userService.GetUserById(id, ctx)
 	h.logger.Info("GetUserByID", zap.Any("user", user))
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
