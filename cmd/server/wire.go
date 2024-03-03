@@ -19,11 +19,13 @@ var ServerSet = wire.NewSet(server.NewServerHTTP)
 
 var RepositorySet = wire.NewSet(
 	repository.NewDb,
+	repository.NewFirebaseApp,
 	repository.NewRepository,
 	repository.NewUserRepository,
 	repository.NewGroupRepository,
 	repository.NewCourseRepository,
 	repository.NewRatingRepository,
+	repository.NewAuthRepository,
 )
 
 var ServiceSet = wire.NewSet(
