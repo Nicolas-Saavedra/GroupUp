@@ -1,11 +1,7 @@
 package model
 
-import (
-	"gorm.io/gorm"
-)
-
 type RatingTag struct {
-	gorm.Model
+	Base
 	Value    string
 	RatingID uint
 }

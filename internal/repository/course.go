@@ -7,7 +7,7 @@ import (
 )
 
 type CourseRepository interface {
-	FirstById(id int64, ctx context.Context) (*model.Course, error)
+	FirstById(id string, ctx context.Context) (*model.Course, error)
 	Create(course *model.Course, ctx context.Context) (*model.Course, error)
 	Update(course *model.Course, ctx context.Context) (*model.Course, error)
 	Delete(course *model.Group, ctx context.Context) error
@@ -23,7 +23,7 @@ type courseRepository struct {
 	*Repository
 }
 
-func (r *courseRepository) FirstById(id int64, ctx context.Context) (*model.Course, error) {
+func (r *courseRepository) FirstById(id string, ctx context.Context) (*model.Course, error) {
 	var course model.Course
 	err := r.DB(ctx).First(&course, id).Error
 	return &course, err

@@ -8,7 +8,7 @@ import (
 )
 
 type UserService interface {
-	GetUserById(id int64, ctx context.Context) (*model.User, error)
+	GetUserById(id string, ctx context.Context) (*model.User, error)
 }
 
 type userService struct {
@@ -23,6 +23,6 @@ func NewUserService(service *Service, userRepository repository.UserRepository) 
 	}
 }
 
-func (s *userService) GetUserById(id int64, ctx context.Context) (*model.User, error) {
+func (s *userService) GetUserById(id string, ctx context.Context) (*model.User, error) {
 	return s.userRepository.FirstById(id, ctx)
 }

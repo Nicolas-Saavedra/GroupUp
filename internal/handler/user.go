@@ -31,14 +31,14 @@ func NewUserHandler(handler *Handler, userService service.UserService) UserHandl
 
 func (h *userHandler) GetUserById(ctx *gin.Context) {
 	var params struct {
-		Id int64 `form:"id" binding:"required"`
+		Id *string `form:"id" binding:"required"`
 	}
 	if err := ctx.ShouldBind(&params); err != nil {
 		resp.HandleError(ctx, http.StatusBadRequest, 1, err.Error(), nil)
 		return
 	}
 
-	user, err := h.userService.GetUserById(params.Id, ctx)
+	user, err := h.userService.GetUserById(*params.Id, ctx)
 	h.logger.Info("GetUserByID", zap.Any("user", user))
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {

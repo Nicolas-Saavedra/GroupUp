@@ -1,11 +1,7 @@
 package model
 
-import (
-	"gorm.io/gorm"
-)
-
 type Group struct {
-	gorm.Model
+	Base
 	Name     string `gorm:"not null"`
 	MaxSize  uint   `gorm:"not null"`
 	CourseID uint

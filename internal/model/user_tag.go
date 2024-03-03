@@ -1,13 +1,9 @@
 package model
 
-import (
-	"gorm.io/gorm"
-)
-
 type UserTag struct {
-	gorm.Model
+	Base
 	Value  string
-	UserID uint
+	UserID uint `json:"-"`
 }
 
 func (m *UserTag) TableName() string {

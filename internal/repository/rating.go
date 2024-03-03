@@ -7,7 +7,7 @@ import (
 )
 
 type RatingRepository interface {
-	FirstById(id int64, ctx context.Context) (*model.Rating, error)
+	FirstById(id string, ctx context.Context) (*model.Rating, error)
 	Create(course *model.Rating, ctx context.Context) (*model.Rating, error)
 	Update(course *model.Rating, ctx context.Context) (*model.Rating, error)
 	Delete(rating *model.Rating, ctx context.Context) error
@@ -23,7 +23,7 @@ type ratingRepository struct {
 	*Repository
 }
 
-func (r *ratingRepository) FirstById(id int64, ctx context.Context) (*model.Rating, error) {
+func (r *ratingRepository) FirstById(id string, ctx context.Context) (*model.Rating, error) {
 	var rating model.Rating
 	err := r.DB(ctx).First(&rating, id).Error
 	return &rating, err

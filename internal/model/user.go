@@ -1,17 +1,12 @@
 package model
 
-import (
-	"gorm.io/gorm"
-)
-
 type User struct {
-	gorm.Model
-	Name     string  `gorm:"not null"`
-	Password string  `gorm:"not null"              json:"-"`
-	Email    string  `gorm:"unique;not null"`
-	Groups   []Group `gorm:"many2many:user_groups"`
-	Tags     []UserTag
-	Ratings  []Rating
+	BaseUser
+	Name    string    `gorm:"not null"`
+	Email   string    `gorm:"unique;not null"`
+	Groups  []Group   `gorm:"many2many:user_groups" json:",omitempty"`
+	Tags    []UserTag `                             json:",omitempty"`
+	Ratings []Rating  `                             json:",omitempty"`
 }
 
 func (u *User) TableName() string {

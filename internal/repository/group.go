@@ -7,7 +7,7 @@ import (
 )
 
 type GroupRepository interface {
-	FirstById(id int64, ctx context.Context) (*model.Group, error)
+	FirstById(id string, ctx context.Context) (*model.Group, error)
 	Create(course *model.Group, ctx context.Context) (*model.Group, error)
 	Update(course *model.Group, ctx context.Context) (*model.Group, error)
 	Delete(group *model.Group, ctx context.Context) error
@@ -23,7 +23,7 @@ type groupRepository struct {
 	*Repository
 }
 
-func (r *groupRepository) FirstById(id int64, ctx context.Context) (*model.Group, error) {
+func (r *groupRepository) FirstById(id string, ctx context.Context) (*model.Group, error) {
 	var group model.Group
 	err := r.DB(ctx).First(&group, id).Error
 	return &group, err

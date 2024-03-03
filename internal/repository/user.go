@@ -7,7 +7,7 @@ import (
 )
 
 type UserRepository interface {
-	FirstById(id int64, ctx context.Context) (*model.User, error)
+	FirstById(id string, ctx context.Context) (*model.User, error)
 	Create(course *model.User, ctx context.Context) (*model.User, error)
 	Update(course *model.User, ctx context.Context) (*model.User, error)
 	Delete(user *model.User, ctx context.Context) error
@@ -23,9 +23,9 @@ func NewUserRepository(repository *Repository) UserRepository {
 	}
 }
 
-func (r *userRepository) FirstById(id int64, ctx context.Context) (*model.User, error) {
+func (r *userRepository) FirstById(id string, ctx context.Context) (*model.User, error) {
 	var user model.User
-	err := r.DB(ctx).First(&user, id).Error
+	err := r.DB(ctx).First(&user, "id = ?", id).Error
 	return &user, err
 }
 

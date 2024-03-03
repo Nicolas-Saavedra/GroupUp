@@ -1,11 +1,7 @@
 package model
 
-import (
-	"gorm.io/gorm"
-)
-
 type Rating struct {
-	gorm.Model
+	Base
 	TextContent string
 	StarRating  uint8
 	UserID      uint

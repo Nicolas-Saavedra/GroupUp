@@ -1,11 +1,7 @@
 package model
 
-import (
-	"gorm.io/gorm"
-)
-
 type Course struct {
-	gorm.Model
+	Base
 	Name   string
 	Groups []Group
 }
