@@ -5,7 +5,6 @@ import (
 	"errors"
 	"fmt"
 
-	"firebase.google.com/go/v4/auth"
 	"gorm.io/gorm"
 
 	"GroupUp/internal/model"
@@ -13,7 +12,8 @@ import (
 )
 
 type UserService interface {
-	FetchCurrentUserOrCreate(token *auth.Token, ctx context.Context) (*model.User, error)
+	FetchCurrentUserOrCreate(id string, ctx context.Context) (*model.User, error)
+	FetchUserById(id string, ctx context.Context) (*model.User, error)
 }
 
 type userService struct {
@@ -35,34 +35,45 @@ func NewUserService(
 }
 
 func (s *userService) FetchCurrentUserOrCreate(
-	token *auth.Token,
+	id string,
 	ctx context.Context,
 ) (*model.User, error) {
-	user, err := s.userRepository.PrivilegedFindById(token.UID, ctx)
+	user, err := s.userRepository.PrivilegedFindById(id, ctx)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return s.createUserFromToken(token, ctx)
+			return s.createUserFromAuthService(id, ctx)
 		}
 		return nil, fmt.Errorf("could not find user with said id")
 	}
 	return user, nil
 }
 
-func (s *userService) createUserFromToken(
-	token *auth.Token,
+func (s *userService) FetchUserById(
+	id string,
 	ctx context.Context,
 ) (*model.User, error) {
-	userLoginInfo, err := s.authRepository.GetLoginInformation(token.UID, ctx)
+	user, err := s.userRepository.FindById(id, ctx)
 	if err != nil {
-		return nil, fmt.Errorf("could not grab login information from user %s", token.UID)
+		return nil, fmt.Errorf("could not find user with said id")
+	}
+	return user, nil
+}
+
+func (s *userService) createUserFromAuthService(
+	id string,
+	ctx context.Context,
+) (*model.User, error) {
+	userLoginInfo, err := s.authRepository.GetLoginInformation(id, ctx)
+	if err != nil {
+		return nil, fmt.Errorf("could not grab login information from user %s", id)
 	}
 	user := &model.User{}
-	user.ID = token.UID
+	user.ID = id
 	user.Name = userLoginInfo.DisplayName
 	user.Email = userLoginInfo.Email
 	_, err = s.userRepository.Create(user, ctx)
 	if err != nil {
-		return nil, fmt.Errorf("could not create new user %s on the database", token.UID)
+		return nil, fmt.Errorf("could not create new user %s on the database", id)
 	}
 	return user, nil
 }
