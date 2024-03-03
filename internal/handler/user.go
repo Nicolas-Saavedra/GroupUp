@@ -5,17 +5,18 @@ import (
 	"fmt"
 	"net/http"
 
+	"firebase.google.com/go/v4/auth"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
 	"gorm.io/gorm"
 
 	"GroupUp/internal/service"
+	"GroupUp/pkg/context"
 	"GroupUp/pkg/helper/resp"
 )
 
 type UserHandler interface {
-	GetUserById(ctx *gin.Context)
-	UpdateUser(ctx *gin.Context)
+	GetUserWithID(ctx *gin.Context)
 }
 
 type userHandler struct {
@@ -30,15 +31,22 @@ func NewUserHandler(handler *Handler, userService service.UserService) UserHandl
 	}
 }
 
-func (h *userHandler) GetUserById(ctx *gin.Context) {
+func (h *userHandler) GetUserWithID(ctx *gin.Context) {
 	id := ctx.Param("id")
-	if id == "" {
-		resp.HandleError(ctx, http.StatusBadRequest, 1, "no supplied id", nil)
-		return
+	token := context.GrabToken(ctx)
+	if token != nil && id == token.UID {
+		h.getCurrentUser(token, ctx)
+	} else {
+		h.getForeignUserWithID(id, ctx)
 	}
+}
 
-	user, err := h.userService.GetUserById(id, ctx)
-	h.logger.Info("GetUserByID", zap.Any("user", user))
+func (h *userHandler) getForeignUserWithID(id string, ctx *gin.Context) {
+}
+
+func (h *userHandler) getCurrentUser(token *auth.Token, ctx *gin.Context) {
+	user, err := h.userService.FetchCurrentUserOrCreate(token, ctx)
+	h.logger.Info("GetCurrentUser", zap.Any("user", user))
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			resp.HandleError(ctx, http.StatusNotFound, 1, "the requested user was not found", nil)

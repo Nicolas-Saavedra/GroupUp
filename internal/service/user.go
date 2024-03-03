@@ -13,7 +13,7 @@ import (
 )
 
 type UserService interface {
-	FetchCurrentUserOrCreate(id string, authHeader string, ctx context.Context) (*model.User, error)
+	FetchCurrentUserOrCreate(token *auth.Token, ctx context.Context) (*model.User, error)
 }
 
 type userService struct {
@@ -35,14 +35,9 @@ func NewUserService(
 }
 
 func (s *userService) FetchCurrentUserOrCreate(
-	id string,
-	authHeader string,
+	token *auth.Token,
 	ctx context.Context,
 ) (*model.User, error) {
-	token, err := s.authRepository.VerifyHeader(authHeader, ctx)
-	if err != nil {
-		return nil, fmt.Errorf("requested auth header is invalid")
-	}
 	user, err := s.userRepository.PrivilegedFindById(token.UID, ctx)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
